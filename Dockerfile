@@ -1,4 +1,5 @@
 FROM php:7.1.33-zts-stretch
+# FROM php:7.1.33-fpm-stretch
 
 RUN apt update && apt install -y \
     admesh \
@@ -12,8 +13,13 @@ RUN apt update && apt install -y \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-configure zip --with-libzip
-RUN docker-php-ext-install zip pdo_mysqlp
+# RUN COPY docker-php-ext-get /usr/local/bin/
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && sync
+
+RUN install-php-extensions zip pdo_mysql
 
 # install elasticsearch
 RUN wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
